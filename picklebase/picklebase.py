@@ -2,6 +2,8 @@
 import os
 import pickle
 from pydantic.utils import deep_update
+# from functools import reduce
+# import operator
 
 
 class Picklebase:
@@ -88,6 +90,15 @@ class Picklebase:
             path (str): The path to the data.
             sync (bool, optional): Whether to sync the cache. Defaults to True.
         """
+        # NOTE: alternative method (requires functools and operator)
+        # *path, key = make_keys(path) 
+        # try:
+        #     del reduce(operator.getitem, path, ref)[key]
+        # except KeyError:
+        #     pass
+        # except TypeError:
+        #     pass
+        # return ref
         references = self.cache
         ref = references
         keys = self.make_keys(path)
