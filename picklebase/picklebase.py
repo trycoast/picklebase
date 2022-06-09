@@ -122,7 +122,11 @@ class Picklebase:
             data (dict): The data to update.
             sync (bool): Whether to sync the cache. Defaults to True.
         """
-        self.cache = deep_update(self.cache, self.make_dict(self.make_keys(path), data))
+
+        self.cache = deep_update(
+            self.cache,
+            self.make_dict(self.make_keys(path.strip()), data) if path != '/' else data
+        )
         if sync:
             self.save()
 
