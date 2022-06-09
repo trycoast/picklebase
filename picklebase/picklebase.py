@@ -17,6 +17,8 @@ class Picklebase:
         self.cache = self.load()
 
     def __call__(self, path: str = '/'):
+        if path == '/':
+            return self.cache
         return self.obtain(self.cache, self.make_keys(path))
 
     @staticmethod
