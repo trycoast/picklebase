@@ -7,7 +7,7 @@ from pydantic.utils import deep_update
 
 
 class Picklebase:
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str = None) -> None:
         """ Initializes the picklebase.
 
         Args:
@@ -17,9 +17,7 @@ class Picklebase:
         self.cache = self.load()
 
     def __call__(self, path: str = '/'):
-        if path == '/':
-            return self.cache
-        return self.obtain(self.cache, self.make_keys(path))
+        return self.read(path)
 
     @staticmethod
     def make_dict(keys: list, value: dict) -> dict:
@@ -71,6 +69,18 @@ class Picklebase:
             return ref
         except KeyError:
             return {}
+        
+    def get(self, path: str = '/') -> dict:
+        """ Reads the data at the specified path.
+
+        Args:
+            path (str): The path to the data.
+
+        Returns:
+            dict: The data at the specified path.
+        """
+        return self.read(path)
+            
         
     def read(self, path: str = '/') -> dict:
         """ Reads the data at the specified path.
@@ -132,17 +142,18 @@ class Picklebase:
 
     def load(self) -> None:
         """ Loads the pickle file. """
-        if os.path.exists(self.path.strip()):
+        if self.path and os.path.exists(self.path.strip()):
             with open(self.path, 'rb') as file:
                 return pickle.load(file)
         return {}
 
     def save(self) -> None:
         """ Saves the pickle file. """
-        if self.path[0] == '/':
-            self.path = self.path[1:]
-        paths = os.path.split(self.path.strip())
-        if not os.path.exists(paths[0]):
-            os.makedirs(paths[0])
-        with open(self.path.strip(), 'wb') as file:
-            pickle.dump(self.cache, file)
+        if self.path:
+            if self.path[0] == '/':
+                self.path = self.path[1:]
+            paths = os.path.split(self.path.strip())
+            if not os.path.exists(paths[0]):
+                os.makedirs(paths[0])
+            with open(self.path.strip(), 'wb') as file:
+                pickle.dump(self.cache, file)
